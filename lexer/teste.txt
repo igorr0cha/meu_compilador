@@ -1,0 +1,10 @@
+algoritmo
+inicio
+    inteiro x <- 10;
+    real y <- 15.50;
+    se (x < y) entao
+        escreva "Tudo certo";
+    senao
+        // Aqui tem um erro proposital para testar
+        x <- x + @;
+fim
