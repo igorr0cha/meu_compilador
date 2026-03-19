@@ -5,13 +5,21 @@
 
 using namespace std;
 
-int main() {
+int main(int argc, char* argv[]) {
     string filename;
     
-    // O programa agora pede o nome do arquivo diretamente na tela
     cout << "### Analisador Lexico Portugol ###\n" << endl;
-    cout << "Digite o nome do arquivo de texto (ex: teste.txt): ";
-    cin >> filename;
+
+    // Permite receber o arquivo via argumento de linha de comando (padrÃ£o de compiladores)
+    if (argc > 1) {
+        filename = argv[1];
+        cout << "Lendo do arquivo: " << filename << endl;
+    } else {
+        cout << "Dica: Em compiladores profissionais, passe o arquivo como argumento!" << endl;
+        cout << "Exemplo: ./compilador lexer/teste.txt\n" << endl;
+        cout << "Digite o caminho do arquivo de texto (ex: lexer/teste.txt): ";
+        cin >> filename;
+    }
     cout << "\n----------------------------------------\n" << endl;
 
     Lexer lexer(filename);
@@ -42,12 +50,12 @@ int main() {
             cout << "<RESERVADA/OP_COMP, \"" << w->lexeme << "\">\n";
         }
         else {
-            // Operadores simples e pontuação
+            // Operadores simples e pontuaï¿½ï¿½o
             cout << "<DELIM/OP, '" << (char)t->tag << "'>\n";
         }
     }
 
-    // Exibe a tabela de símbolos no final da execução, como pedido
+    // Exibe a tabela de sï¿½mbolos no final da execuï¿½ï¿½o, como pedido
     lexer.printSymbolTable();
 
     cout << "\nAnalise concluida. Pressione Enter para sair..." << endl;

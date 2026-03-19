@@ -1,6 +1,12 @@
+/* 
+comentario em bloco
+teste
+*/
+// comentario em linha
 algoritmo
 inicio
-    inteiro x <- 10;
+    inteiro // teste inline
+    x <- 10;
     real y <- 15.50;
     se (x < y) entao
         escreva "Tudo certo";

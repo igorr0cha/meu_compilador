@@ -109,7 +109,7 @@ public:
 
         if (file.eof() || peek == (char)-1) return NULL;
 
-        // --- Tratamento de Comentários ---
+        // --- Tratamento de Comentrios ---
         if (peek == '/') {
             read();
             if (peek == '/') { 
@@ -155,14 +155,14 @@ public:
                 read();
             }
             if (file.eof()) {
-                cerr << "ERRO LÉXICO: String nao fechada antes do fim do ficheiro na Linha " << line << endl;
+                cerr << "ERRO LXICO: String nao fechada antes do fim do ficheiro na Linha " << line << endl;
             } else {
                 peek = ' '; 
             }
             return new Word(s, LITERAL_STRING);
         }
 
-        // --- Reconhecimento de Números ---
+        // --- Reconhecimento de Nmeros ---
         // BLINDADO COM UNSIGNED CHAR
         if (isdigit((unsigned char)peek)) {
             int v = 0;
@@ -209,11 +209,10 @@ public:
         }
         
         if (valid_chars.find(peek) == string::npos) {
-            cerr << "ERRO LÉXICO: Simbolo nao reconhecido '" << peek 
+            cerr << "ERRO LEXICO: Simbolo nao reconhecido '" << peek 
                  << "' na Linha " << line << ", Coluna " << col << endl;
-            Token* t = new Token(peek);
             peek = ' ';
-            return t;
+            return scan();
         }
 
         Token* t = new Token(peek);

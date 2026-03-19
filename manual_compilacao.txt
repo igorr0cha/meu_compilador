@@ -2,6 +2,4 @@
 g++ lexer/main.cpp -o compilador 
 
 # Para rodar o programa:
-Para rodar o programa:
-
-Bash
+./compilador
