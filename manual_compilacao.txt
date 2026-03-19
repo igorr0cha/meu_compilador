@@ -1,5 +1,57 @@
-# Para compilar os arquivos que estão na pasta lexer
-g++ lexer/main.cpp -o compilador 
+# ==============================================================================
+# MANUAL DE COMPILAÇÃO E EXECUÇÃO DO ANALISADOR LÉXICO (PORTUGOL)
+# ==============================================================================
 
-# Para rodar o programa:
-./compilador
+Este projeto foi construído em C++ e atende às exigências da primeira etapa de
+construção de um compilador: o Analisador Léxico (Scanner).
+
+--------------------------------------------------------------------------------
+1. COMO COMPILAR O PROJETO (Gerar o executável)
+--------------------------------------------------------------------------------
+
+A lógica principal do programa entra em execução a partir do arquivo "main.cpp"
+presente na pasta "lexer". Para compilar na sua máquina Linux através do GCC:
+
+Abra o terminal na pasta raiz do projeto (meu_compilador/) e rode:
+
+    g++ lexer/main.cpp -o compilador
+
+Isso irá ler o arquivo main.cpp (junto com lexer.h e tags.h) e irá gerar
+um programa executável chamado "compilador" na pasta atual.
+
+--------------------------------------------------------------------------------
+2. COMO EXECUTAR O PROGRAMA (Rodar a varredura Léxica)
+--------------------------------------------------------------------------------
+
+O seu analisador foi implementado seguindo o padrão da indústria, ou seja,
+ele é capaz de receber o arquivo de texto de código-fonte como argumento
+na hora de ser chamado no terminal.
+
+EXEMPLO PADRÃO (Executando junto com um arquivo de teste já salvo):
+    
+    ./compilador lexer/teste.txt
+
+> Nota: O programa lerá o arquivo "teste.txt", efetuará a análise léxica,
+  printará cada Token encontrado, acusará possíveis erros através de reportagem
+  de Linha/Coluna e ao final exibirá a otimizada Tabela de Símbolos.
+
+MODO INTERATIVO (Fallback):
+Se você executar o programa SOZINHO sem passar o ".txt", dessa forma:
+    
+    ./compilador
+
+Ele avisará sobre o modo CLI e solicitará que você digite no prompt de comando
+o caminho para o arquivo de texto que deseja avaliar. 
+EX: lexer/teste.txt
+
+--------------------------------------------------------------------------------
+3. CRIANDO NOVOS TESTES (Lógica Genérica)
+--------------------------------------------------------------------------------
+
+Para avaliar novas linguagens ou lógicas diferentes do professor:
+
+1. Crie um novo arquivo, ex: "prova_professor.txt" na pasta "lexer/"
+2. Escreva dentro dele os scripts que precisam ser testados.
+3. Volte ao terminal rodando o analisador passando o novo caminho:
+    
+    ./compilador lexer/prova_professor.txt
