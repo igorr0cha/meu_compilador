@@ -1,0 +1,34 @@
+# Arquivos de objeto compilados
+*.o
+*.obj
+
+# Bibliotecas
+*.a
+*.so
+*.dll
+*.dylib
+
+# Executáveis
+*.exe
+*.out
+*.app
+compilador
+
+# Diretórios de build (Make/CMake)
+build/
+bin/
+obj/
+
+# Arquivos do VS Code e extensões (Local History)
+.vscode/
+.history/
+
+# Arquivos temporários e de log
+*.log
+*.tmp
+*.swp
+*~
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
