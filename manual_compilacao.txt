@@ -55,3 +55,79 @@ Para avaliar novas linguagens ou lógicas diferentes do professor:
 3. Volte ao terminal rodando o analisador passando o novo caminho:
     
     ./compilador lexer/prova_professor.txt
+
+--------------------------------------------------------------------------------
+4. INSTALANDO O COMPILADOR NO WINDOWS (Com Permissão de Administrador)
+--------------------------------------------------------------------------------
+
+Se você está no seu PC pessoal ou possui acesso de administrador, a melhor forma 
+é instalar o compilador permanentemente pelo MSYS2.
+
+Passo 1: Instalar o compilador (MinGW-w64 via MSYS2)
+1. Baixe o instalador do MSYS2 em https://www.msys2.org/
+2. Execute o instalador e siga as instruções até o fim.
+3. Ao finalizar, o terminal do MSYS2 será aberto. Execute o comando abaixo para 
+   instalar o g++ (usando o pacote MinGW-w64):
+
+   pacman -S mingw-w64-ucrt-x86_64-gcc
+
+4. Aperte Enter para confirmar quando for perguntado.
+
+Passo 2: Adicionar o g++ ao PATH do Windows
+Mesmo após instalar, o Windows não sabe onde ele está. Você precisa adicionar o 
+caminho da pasta bin nas variáveis de ambiente:
+
+1. Abra o menu Iniciar do Windows e digite "Variáveis de ambiente" e selecione 
+   "Editar as variáveis de ambiente do sistema".
+2. Clique no botão "Variáveis de Ambiente...".
+3. Na seção "Variáveis do sistema" (ou "Variáveis de usuário"), procure e 
+   selecione a variável "Path" e clique em "Editar...".
+4. Clique em "Novo" e cole o caminho para a pasta bin do MSYS2. Normalmente é:
+   C:\msys64\ucrt64\bin
+   (Se você instalou com um pacote diferente, pode ser C:\msys64\mingw64\bin)
+5. Reinicie o seu VS Code ou Terminal para que o Windows reconheça o comando.
+   Após isso, você poderá rodar a compilação padrão (Seção 1).
+
+--------------------------------------------------------------------------------
+5. RODANDO NO WINDOWS SEM PERMISSÃO DE ADMINISTRADOR (Faculdade / Trabalho)
+--------------------------------------------------------------------------------
+
+Se você estiver em um PC Windows onde não tem permissão para instalar programas
+(como no laboratório da faculdade ou no trabalho), você tem duas opções principais
+para compilar e executar o projeto livremente:
+
+OPÇÃO A: Usar um Compilador Portátil (WinLibs)
+Esta opção não requer instalação, basta extrair uma pasta.
+
+1. Acesse o site oficial do WinLibs: https://winlibs.com/
+2. Vá até a seção de Downloads e baixe a versão compactada em ".zip" ou ".7z" 
+   (Procure pela "GCC release POSIX").
+3. Extraia a pasta "mingw64" contida dentro do arquivo para um local em que você 
+   tenha controle de leitura/escrita, como seus "Documentos", "Área de Trabalho" 
+   ou até um Pendrive.
+4. No VS Code, abra o Terminal (PowerShell) e injete o compilador APENAS na sua 
+   sessão atual rodando esse comando (lembre-se de adaptar o caminho para o seu):
+   
+    $env:Path = "C:\Caminho\Para\Sua\Pasta\mingw64\bin;" + $env:Path
+
+5. Feito isso, o terminal reconhecerá o g++. Compile gerando um executável (.exe):
+
+    g++ lexer/main.cpp -o compilador.exe
+
+6. Execute apontando para o seu texto:
+
+    .\compilador.exe lexer/teste.txt
+
+
+OPÇÃO B: Usar o GitHub Codespaces (Recomendado e Nativo Linux)
+Já que você desenvolveu parte do projeto no Linux (Ubuntu), você pode simular um!
+O Codespaces roda uma máquina virtual grátis diretamente na nuvem.
+
+1. Acesse o github.com pelo navegador e abra o repositório deste projeto.
+2. Clique no botão Verde "<> Code", selecione a aba "Codespaces" e clique 
+   no botão "Create codespace on main".
+3. Ele vai carregar uma janela idêntica a do seu VS Code local, só que rodando 
+   um Ubuntu real nos fundos.
+4. O `g++` já vem instalado por padrão nesse Linux! Basta você abrir o 
+   terminal integrado desta tela e rodar os comandos lá do "Ponto 1" deste 
+   manual sem mudar uma única linha!
