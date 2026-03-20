@@ -109,6 +109,7 @@ Esta opção não requer instalação, basta extrair uma pasta.
    sessão atual rodando esse comando (lembre-se de adaptar o caminho para o seu):
    
     $env:Path = "C:\Caminho\Para\Sua\Pasta\mingw64\bin;" + $env:Path
+    $env:Path = "C:\Users\igort10rocha\Downloads\x86_64-8.1.0-release-posix-seh-rt_v6-rev0\mingw64\bin;" + $env:Path
 
 5. Feito isso, o terminal reconhecerá o g++. Compile gerando um executável (.exe):
 
