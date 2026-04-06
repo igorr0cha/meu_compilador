@@ -1,0 +1,19 @@
+algoritmo "Teste Simples"
+
+inteiro: idade;
+real: nota;
+caractere: nome;
+logico: aprovado;
+
+inicio
+idade <- 20;
+nota <- 8.5;
+nome <- "MARIA";
+aprovado <- 1;
+
+escreva("Nome: ", nome);
+escreva("Idade: ", idade);
+escreva("Nota: ", nota);
+leia(idade);
+
+fim
