@@ -1,0 +1,35 @@
+algoritmo "Teste Medio"
+/* isto e comentario*/
+inteiro: x, y, resto;
+real: media;
+caractere: mensagem;
+logico: ativo;
+
+inicio
+x <- 10;
+y <- 3;
+media <- 7.5;
+mensagem <- "Processando";
+ativo <- 1;
+
+resto <- x % y;
+x <- x + y;
+x <- x - 1;
+x <- x * 2;
+x <- x / 2;
+
+se x >= y entao
+    escreva("x maior ou igual a y");
+senao
+    escreva("x menor que y");
+
+se x <> y entao
+    escreva("x diferente de y");
+
+se x <= 20 entao
+    escreva("x menor ou igual a 20");
+
+enquanto x > 0 faca
+    x <- x - 1;
+
+fim

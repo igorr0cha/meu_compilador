@@ -11,6 +11,7 @@ inicio
     se (x < y) entao
         escreva "Tudo certo";
     senao
-        // Aqui tem um erro proposital para testar
+        // erro proposital para testar
         x <- x + @;
+        abacaxi = 25;
 fim
