@@ -13,17 +13,22 @@ enum Tag {
     ENQUANTO = 266, FACA = 267,
     PARA = 268, DE = 269, ATE = 270,
     
-    // Tipos de Variáveis
+    // Tipos de Variï¿½veis
     INTEIRO = 271, REAL = 272, CARACTERE = 273, LOGICO = 274,
     
-    // Entrada e Saída
+    // Entrada e Saï¿½da
     ESCREVA = 275, LEIA = 276,
     
     // Operadores Compostos e Relacionais
     ATRIBUICAO = 277, // <-
     DIFERENTE = 278,  // <>
     MENOR_IGUAL = 279,// <=
-    MAIOR_IGUAL = 280 // >=
+    MAIOR_IGUAL = 280,// >=
+
+    // Suporte para booleanos e controle adicional
+    VERDADEIRO = 281, // true
+    FALSO = 282,      // false
+    END_OF_FILE = 283 // EOF
 };
 
 #endif

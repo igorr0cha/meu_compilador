@@ -66,6 +66,9 @@ private:
     }
 
 public:
+    int getLine() const { return line; }
+    int getCol() const { return col; }
+
     Lexer(const string& filename) : peek(' '), line(1), col(0) {
         file.open(filename.c_str()); 
         if (!file.is_open()) {
@@ -81,6 +84,8 @@ public:
         reserve(new Word("inteiro", INTEIRO)); reserve(new Word("real", REAL));
         reserve(new Word("caractere", CARACTERE)); reserve(new Word("logico", LOGICO));
         reserve(new Word("escreva", ESCREVA)); reserve(new Word("leia", LEIA));
+        reserve(new Word("verdadeiro", VERDADEIRO)); reserve(new Word("falso", FALSO));
+        reserve(new Word("true", VERDADEIRO)); reserve(new Word("false", FALSO));
     }
 
     ~Lexer() {
