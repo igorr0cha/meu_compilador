@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/igort10rocha/Documents/meu_compilador/lexer",
-      "program": "c:/Users/igort10rocha/Documents/meu_compilador/lexer/build/Debug/outDebug",
+      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}/compilador",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

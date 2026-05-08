@@ -39,6 +39,4 @@ leia(i);
 
 total <- total + valor / 2 - 1 * 3 % 2;
 
-@erro
-
 fim
