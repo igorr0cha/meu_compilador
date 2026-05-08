@@ -18,7 +18,7 @@
  * 
  * Gramática (estendida para suportar scripts reais):
  * 
- *  Programa       → algoritmo STR|ID inicio ListaDeclaracoes ListaComandos fim
+ *  Programa       → algoritmo STR|ID inicio ListaDeclaracoes ListaComandos fim?
  *  ListaDeclaracoes → Declaracao ListaDeclaracoes | ε
  *  Declaracao     → tipo ':' ListaIDs ';'
  *  ListaIDs       → ID ListaIDsRest
@@ -33,10 +33,10 @@
  *  Argumento      → STR | Expr
  *  Leitura        → leia '(' ID ('[' Expr ']')? ')' ';'
  * 
- *  Se             → se Condicao entao ListaComandos SenaoOpcional fim
+ *  Se             → se Condicao entao ListaComandos SenaoOpcional fim?
  *  SenaoOpcional  → senao ListaComandos | ε
- *  Enquanto       → enquanto Condicao faca ListaComandos fim
- *  Para           → para ID de Expr ate Expr faca ListaComandos fim
+ *  Enquanto       → enquanto Condicao faca ListaComandos fim?
+ *  Para           → para ID de Expr ate Expr faca ListaComandos fim?
  * 
  *  Condicao       → Expr OperRel Expr
  *  OperRel        → '=' | '<>' | '>' | '<' | '>=' | '<='

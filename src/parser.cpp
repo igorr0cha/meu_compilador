@@ -1,6 +1,6 @@
 #include "../include/parser.h"
-#include <iostream>
 #include <cstdlib>
+#include <iostream>
 
 using namespace std;
 
@@ -49,18 +49,14 @@ string Parser::getTagName(int tag) const {
 void Parser::error(const string& expected) {
     cout << "\n[ERRO SINTATICO] Linha " << lexer->getLine()
          << ", Coluna " << lexer->getCol() << ":\n";
-    
+
     string found = (lookahead == NULL) ? "Fim de Arquivo" : getTagName(lookahead->tag);
-    string lexeme_info = "";
-    
-    if (lookahead != NULL) {
-        lexeme_info = " (" + lookahead->lexeme() + ")";
-    }
-    
+    string lexeme_info = (lookahead == NULL) ? "" : " (" + lookahead->lexeme() + ")";
+
     cout << "  Esperado: '" << expected << "'\n";
     cout << "  Encontrado: '" << found << "'" << lexeme_info << "\n";
     cout << "\nAnalise interrompida devido a erro sintatico.\n";
-    
+
     exit(1);
 }
 
@@ -72,12 +68,37 @@ void Parser::match(int tag) {
     }
 }
 
-// ===== Funções de Produção da Gramática =====
+int Parser::opMultiplicativo() {
+    if (lookahead == NULL) {
+        return -1;
+    }
+
+    int tag = lookahead->tag;
+    if (tag == '*' || tag == '/' || tag == '%') {
+        return tag;
+    }
+
+    return -1;
+}
+
+int Parser::opAritmetico() {
+    if (lookahead == NULL) {
+        return -1;
+    }
+
+    int tag = lookahead->tag;
+    if (tag == '+' || tag == '-') {
+        return tag;
+    }
+
+    return -1;
+}
 
 void Parser::valor() {
     if (lookahead == NULL) {
         error("Valor (ID, numero, string, ou logico)");
     }
+
     switch (lookahead->tag) {
         case ID:
             match(ID);
@@ -102,38 +123,17 @@ void Parser::valor() {
     }
 }
 
-int Parser::opMultiplicativo() {
-    if (lookahead == NULL) return -1;
-    
-    int tag = lookahead->tag;
-    if (tag == '*' || tag == '/' || tag == '%') {
-        return tag;
-    }
-    return -1;
-}
-
-int Parser::opAritmetico() {
-    if (lookahead == NULL) return -1;
-    
-    int tag = lookahead->tag;
-    if (tag == '+' || tag == '-') {
-        return tag;
-    }
-    return -1;
-}
-
 void Parser::fator() {
     if (lookahead == NULL) {
         error("Fator (valor ou expressao)");
     }
-    
+
     if (lookahead->tag == '(') {
         match('(');
         expr();
         match(')');
     } else if (lookahead->tag == ID) {
         match(ID);
-        // Suporte a acesso a vetores: ID[expr]
         if (lookahead != NULL && lookahead->tag == '[') {
             match('[');
             expr();
@@ -166,7 +166,7 @@ void Parser::operRel() {
     if (lookahead == NULL) {
         error("Operador Relacional");
     }
-    
+
     switch (lookahead->tag) {
         case '=':
             match('=');
@@ -209,7 +209,7 @@ void Parser::listaArgumentos() {
     if (lookahead == NULL) {
         error("Argumentos");
     }
-    
+
     argumento();
     while (lookahead != NULL && lookahead->tag == ',') {
         match(',');
@@ -219,14 +219,13 @@ void Parser::listaArgumentos() {
 
 void Parser::atribuicao() {
     match(ID);
-    
-    // Suporte a acesso a vetores no LHS
+
     if (lookahead != NULL && lookahead->tag == '[') {
         match('[');
         expr();
         match(']');
     }
-    
+
     match(ATRIBUICAO);
     expr();
     match(';');
@@ -244,14 +243,13 @@ void Parser::leitura() {
     match(LEIA);
     match('(');
     match(ID);
-    
-    // Suporte a acesso a vetores
+
     if (lookahead != NULL && lookahead->tag == '[') {
         match('[');
         expr();
         match(']');
     }
-    
+
     match(')');
     match(';');
 }
@@ -269,9 +267,10 @@ void Parser::comandoSe() {
     match(ENTAO);
     listaComandos();
     senaoOpcional();
-    // Nota: Os scripts reais não usam 'fim' para cada bloco 'se'.
-    // O 'fim' final do programa encerra todos os blocos.
-    // Portanto, não exigimos 'fim' aqui.
+
+    if (lookahead != NULL && lookahead->tag == FIM) {
+        match(FIM);
+    }
 }
 
 void Parser::comandoEnquanto() {
@@ -279,8 +278,10 @@ void Parser::comandoEnquanto() {
     condicao();
     match(FACA);
     listaComandos();
-    // Nota: Os scripts reais não usam 'fim' para cada bloco 'enquanto'.
-    // O 'fim' final do programa encerra todos os blocos.
+
+    if (lookahead != NULL && lookahead->tag == FIM) {
+        match(FIM);
+    }
 }
 
 void Parser::comandoPara() {
@@ -292,15 +293,17 @@ void Parser::comandoPara() {
     expr();
     match(FACA);
     listaComandos();
-    // Nota: Os scripts reais não usam 'fim' para cada bloco 'para'.
-    // O 'fim' final do programa encerra todos os blocos.
+
+    if (lookahead != NULL && lookahead->tag == FIM) {
+        match(FIM);
+    }
 }
 
 void Parser::comando() {
     if (lookahead == NULL) {
         error("Comando");
     }
-    
+
     switch (lookahead->tag) {
         case ID:
             atribuicao();
@@ -339,18 +342,17 @@ void Parser::listaComandos() {
 
 void Parser::listaIDs() {
     match(ID);
-    
-    // Suporte a dimensão de vetor: ID[NUM]
+
     if (lookahead != NULL && lookahead->tag == '[') {
         match('[');
         match(NUM_INT);
         match(']');
     }
-    
+
     while (lookahead != NULL && lookahead->tag == ',') {
         match(',');
         match(ID);
-        
+
         if (lookahead != NULL && lookahead->tag == '[') {
             match('[');
             match(NUM_INT);
@@ -360,8 +362,6 @@ void Parser::listaIDs() {
 }
 
 void Parser::declaracao() {
-    // tipo : listaIDs ;
-    // Tipo já foi verificado pelo chamador
     if (lookahead == NULL || (
         lookahead->tag != INTEIRO &&
         lookahead->tag != REAL &&
@@ -369,8 +369,8 @@ void Parser::declaracao() {
         lookahead->tag != LOGICO)) {
         error("Tipo (inteiro, real, caractere, ou logico)");
     }
-    
-    match(lookahead->tag); // Consome o tipo
+
+    match(lookahead->tag);
     match(':');
     listaIDs();
     match(';');
@@ -388,27 +388,30 @@ void Parser::listaDeclaracoes() {
 
 void Parser::programa() {
     match(ALGORITMO);
-    
-    // Nome do programa (STR ou ID)
+
     if (lookahead != NULL && lookahead->tag == LITERAL_STRING) {
         match(LITERAL_STRING);
     } else {
         match(ID);
     }
-    
-    // Declarações opcionais
+
     listaDeclaracoes();
-    
     match(INICIO);
     listaComandos();
-    match(FIM);
+
+    if (lookahead != NULL && lookahead->tag == FIM) {
+        match(FIM);
+    } else if (lookahead == NULL) {
+        // EOF válido: o fechamento do programa já foi absorvido por um bloco aninhado.
+    } else {
+        error("fim");
+    }
 }
 
 void Parser::parse() {
-    move(); // Pega o primeiro token
-    programa(); // Analisa o programa
-    
-    // Verifica se há tokens extras após "fim"
+    move();
+    programa();
+
     if (lookahead != NULL) {
         error("Fim de Arquivo (nenhum token deve vir apos 'fim')");
     }

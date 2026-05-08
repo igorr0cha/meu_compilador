@@ -83,7 +83,7 @@ make clean
 ### Produção
 
 ```
-Programa       → algoritmo (STR|ID) ListaDeclaracoes inicio ListaComandos fim
+Programa       → algoritmo (STR|ID) ListaDeclaracoes inicio ListaComandos fim?
 
 ListaDeclaracoes → Declaracao* | ε
 Declaracao     → tipo ':' ListaIDs ';'
@@ -95,10 +95,10 @@ Atribuicao     → ID ('[' Expr ']')? '<-' Expr ';'
 Escrita        → escreva '(' ListaArgumentos ')' ';'
 Leitura        → leia '(' ID ('[' Expr ']')? ')' ';'
 
-Se             → se Condicao entao ListaComandos SenaoOpcional
+Se             → se Condicao entao ListaComandos SenaoOpcional fim?
 SenaoOpcional  → senao ListaComandos | ε
-Enquanto       → enquanto Condicao faca ListaComandos
-Para           → para ID de Expr ate Expr faca ListaComandos
+Enquanto       → enquanto Condicao faca ListaComandos fim?
+Para           → para ID de Expr ate Expr faca ListaComandos fim?
 
 Condicao       → Expr OperRel Expr
 OperRel        → '=' | '<>' | '>' | '<' | '>=' | '<='
@@ -163,7 +163,13 @@ void programa() {
     
     match(INICIO);     // Exige token "inicio"
     listaComandos();   // Processa corpo do programa
-    match(FIM);        // Exige token "fim"
+    if (lookahead != NULL && lookahead->tag == FIM) {
+        match(FIM);
+    } else if (lookahead == NULL) {
+        // EOF válido quando um bloco interno já absorveu o fechamento.
+    } else {
+        error("fim");
+    }
 }
 ```
 

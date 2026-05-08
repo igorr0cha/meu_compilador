@@ -9,7 +9,7 @@
 ## 📊 Atendimento de Requisitos
 
 ### ✅ 1. Estrutura Geral do Programa
-- **Requisito**: `Programa → algoritmo STR inicio ListaComandos fim`
+- **Requisito**: `Programa → algoritmo STR inicio ListaComandos fim?`
 - **Implementação**: Função `programa()` em `src/parser.cpp` (linha ~345)
 - **Status**: ✅ FUNCIONANDO
 
@@ -30,9 +30,9 @@
 | Para | `comandoPara()` | ✅ |
 
 ### ✅ 4. Estruturas de Controle
-- **Se com Senão**: `comandoSe()` + `senaoOpcional()` ✅
-- **Enquanto**: `comandoEnquanto()` ✅
-- **Para**: `comandoPara()` ✅
+- **Se com Senão**: `comandoSe()` + `senaoOpcional()` + fechamento opcional `fim` ✅
+- **Enquanto**: `comandoEnquanto()` com fechamento opcional `fim` ✅
+- **Para**: `comandoPara()` com fechamento opcional `fim` ✅
 - **Condições**: `condicao()` com operadores relacionais ✅
 
 ### ✅ 5. Funcionalidades Mínimas
