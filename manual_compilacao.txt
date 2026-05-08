@@ -132,3 +132,7 @@ O Codespaces roda uma máquina virtual grátis diretamente na nuvem.
 4. O `g++` já vem instalado por padrão nesse Linux! Basta você abrir o 
    terminal integrado desta tela e rodar os comandos lá do "Ponto 1" deste 
    manual sem mudar uma única linha!
+
+
+
+g++ -std=c++11 -Wall -Wextra -O2 -I. src/main.cpp src/lexer.cpp src/parser.cpp -o compilador
