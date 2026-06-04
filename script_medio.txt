@@ -1,0 +1,8 @@
+algoritmo "Teste Medio"
+inicio
+se x > 10
+    escreva("Maior");
+senao
+    leia("x");
+fim
+fim

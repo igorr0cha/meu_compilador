@@ -1,0 +1,9 @@
+algoritmo "Teste Dificil"
+inicio
+para i de 1 10 faca
+    escreva(i)
+fim
+enquanto x > 0
+    x <- 1;
+fim
+fim
