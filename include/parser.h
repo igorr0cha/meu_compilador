@@ -5,6 +5,7 @@
 #include "lexer.h"
 #include "token.h"
 #include "tags.h"
+#include "semantic.h"
 
 /**
  * Analisador Sintático (Parser) para a linguagem Portugol.
@@ -51,6 +52,7 @@ class Parser {
 private:
     Lexer* lexer;
     Token* lookahead;
+    SemanticAnalyzer* sem;
     
     // ===== Funções Básicas do Parser =====
     
@@ -118,7 +120,7 @@ private:
     void programa();
     void listaDeclaracoes();
     void declaracao();
-    void listaIDs();
+    void listaIDs(SemanticAnalyzer::TypeCode declaredType);
     void listaComandos();
     void comando();
     void atribuicao();
@@ -134,10 +136,10 @@ private:
     void operRel();
     
     // Expressões aritméticas com precedência
-    void expr();
-    void termo();
-    void fator();
-    void valor();
+    int expr();
+    int termo();
+    int fator();
+    int valor();
     
     int opAritmetico();  // Retorna a tag do operador (+, -, etc.)
     int opMultiplicativo(); // Retorna a tag do operador (*, /, %)
@@ -147,6 +149,7 @@ public:
      * Construtor: associa o parser ao lexer.
      */
     explicit Parser(Lexer* lexer_param);
+    ~Parser();
     
     /**
      * parse() - Função Principal de Análise

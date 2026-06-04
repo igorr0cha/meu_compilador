@@ -5,7 +5,12 @@
 using namespace std;
 
 Parser::Parser(Lexer* lexer_param)
-    : lexer(lexer_param), lookahead(NULL) {
+    : lexer(lexer_param), lookahead(NULL), sem(nullptr) {
+    sem = new SemanticAnalyzer(lexer_param);
+}
+
+Parser::~Parser() {
+    if (sem) delete sem;
 }
 
 void Parser::move() {
@@ -94,72 +99,96 @@ int Parser::opAritmetico() {
     return -1;
 }
 
-void Parser::valor() {
+int Parser::valor() {
     if (lookahead == NULL) {
         error("Valor (ID, numero, string, ou logico)");
     }
 
     switch (lookahead->tag) {
-        case ID:
+        case ID: {
+            Word* w = dynamic_cast<Word*>(lookahead);
+            std::string name = w ? w->lexeme() : std::string(1, (char)lookahead->tag);
             match(ID);
-            break;
+            if (lookahead != NULL && lookahead->tag == '[') {
+                match('[');
+                int idxType = expr();
+                match(']');
+                // index must be integer
+                if (idxType != SemanticAnalyzer::TYPE_INT) {
+                    sem->error("Indice de array deve ser inteiro");
+                }
+                SemanticAnalyzer::Symbol* s = sem->lookup(name);
+                if (!s) sem->error("Identificador nao declarado: " + name);
+                return s->type; // array element type
+            }
+            SemanticAnalyzer::Symbol* s = sem->lookup(name);
+            if (!s) sem->error("Identificador nao declarado: " + name);
+            return s->type;
+        }
         case NUM_INT:
             match(NUM_INT);
-            break;
+            return SemanticAnalyzer::TYPE_INT;
         case NUM_REAL:
             match(NUM_REAL);
-            break;
+            return SemanticAnalyzer::TYPE_REAL;
         case LITERAL_STRING:
             match(LITERAL_STRING);
-            break;
+            return SemanticAnalyzer::TYPE_STR;
         case VERDADEIRO:
             match(VERDADEIRO);
-            break;
+            return SemanticAnalyzer::TYPE_BOOL;
         case FALSO:
             match(FALSO);
-            break;
+            return SemanticAnalyzer::TYPE_BOOL;
         default:
             error("Valor (ID, numero, string, ou logico)");
+            return SemanticAnalyzer::TYPE_ERROR;
     }
 }
 
-void Parser::fator() {
+int Parser::fator() {
     if (lookahead == NULL) {
         error("Fator (valor ou expressao)");
     }
 
     if (lookahead->tag == '(') {
         match('(');
-        expr();
+        int t = expr();
         match(')');
+        return t;
     } else if (lookahead->tag == ID) {
-        match(ID);
-        if (lookahead != NULL && lookahead->tag == '[') {
-            match('[');
-            expr();
-            match(']');
-        }
+        // valor() handles ID and optional indexing
+        return valor();
     } else {
-        valor();
+        return valor();
     }
 }
 
-void Parser::termo() {
-    fator();
+int Parser::termo() {
+    int t = fator();
     while (opMultiplicativo() != -1) {
         int op = lookahead->tag;
         match(op);
-        fator();
+        int right = fator();
+        // arithmetic type promotion: int -> real
+        if (t == SemanticAnalyzer::TYPE_REAL || right == SemanticAnalyzer::TYPE_REAL) t = SemanticAnalyzer::TYPE_REAL;
+        else if (t == SemanticAnalyzer::TYPE_INT && right == SemanticAnalyzer::TYPE_INT) t = SemanticAnalyzer::TYPE_INT;
+        else t = SemanticAnalyzer::TYPE_ERROR;
     }
+    return t;
 }
 
-void Parser::expr() {
-    termo();
+int Parser::expr() {
+    int t = termo();
     while (opAritmetico() != -1) {
         int op = lookahead->tag;
         match(op);
-        termo();
+        int right = termo();
+        if (t == SemanticAnalyzer::TYPE_REAL || right == SemanticAnalyzer::TYPE_REAL) t = SemanticAnalyzer::TYPE_REAL;
+        else if (t == SemanticAnalyzer::TYPE_INT && right == SemanticAnalyzer::TYPE_INT) t = SemanticAnalyzer::TYPE_INT;
+        else t = SemanticAnalyzer::TYPE_ERROR;
     }
+    return t;
 }
 
 void Parser::operRel() {
@@ -192,9 +221,12 @@ void Parser::operRel() {
 }
 
 void Parser::condicao() {
-    expr();
+    int left = expr();
     operRel();
-    expr();
+    int right = expr();
+    if (left == SemanticAnalyzer::TYPE_ERROR || right == SemanticAnalyzer::TYPE_ERROR) {
+        sem->error("Operacao relacional com tipos invalidos");
+    }
 }
 
 void Parser::argumento() {
@@ -218,16 +250,23 @@ void Parser::listaArgumentos() {
 }
 
 void Parser::atribuicao() {
+    if (lookahead == NULL) error("Atribuicao");
+    Word* w = dynamic_cast<Word*>(lookahead);
+    std::string name = w ? w->lexeme() : "";
     match(ID);
 
+    bool isArrayAccess = false;
     if (lookahead != NULL && lookahead->tag == '[') {
         match('[');
-        expr();
+        int idxType = expr();
+        if (idxType != SemanticAnalyzer::TYPE_INT) sem->error("Indice de array deve ser inteiro");
         match(']');
+        isArrayAccess = true;
     }
 
     match(ATRIBUICAO);
-    expr();
+    int exprType = expr();
+    sem->checkAssignment(name, (SemanticAnalyzer::TypeCode)exprType, isArrayAccess);
     match(';');
 }
 
@@ -242,13 +281,23 @@ void Parser::escrita() {
 void Parser::leitura() {
     match(LEIA);
     match('(');
+    if (lookahead == NULL) error("leia");
+    Word* w = dynamic_cast<Word*>(lookahead);
+    std::string name = w ? w->lexeme() : "";
     match(ID);
 
+    bool isArrayAccess = false;
     if (lookahead != NULL && lookahead->tag == '[') {
         match('[');
-        expr();
+        int idxType = expr();
+        if (idxType != SemanticAnalyzer::TYPE_INT) sem->error("Indice de array deve ser inteiro");
         match(']');
+        isArrayAccess = true;
     }
+
+    // leitura deve referenciar var declarada
+    SemanticAnalyzer::Symbol* s = sem->lookup(name);
+    if (!s) sem->error("Identificador nao declarado: " + name);
 
     match(')');
     match(';');
@@ -257,7 +306,9 @@ void Parser::leitura() {
 void Parser::senaoOpcional() {
     if (lookahead != NULL && lookahead->tag == SENAO) {
         match(SENAO);
+        sem->enterScope();
         listaComandos();
+        sem->exitScope();
     }
 }
 
@@ -265,7 +316,9 @@ void Parser::comandoSe() {
     match(SE);
     condicao();
     match(ENTAO);
+    sem->enterScope();
     listaComandos();
+    sem->exitScope();
     senaoOpcional();
 
     if (lookahead != NULL && lookahead->tag == FIM) {
@@ -277,7 +330,9 @@ void Parser::comandoEnquanto() {
     match(ENQUANTO);
     condicao();
     match(FACA);
+    sem->enterScope();
     listaComandos();
+    sem->exitScope();
 
     if (lookahead != NULL && lookahead->tag == FIM) {
         match(FIM);
@@ -286,13 +341,18 @@ void Parser::comandoEnquanto() {
 
 void Parser::comandoPara() {
     match(PARA);
+    if (lookahead == NULL) error("para");
+    Word* w = dynamic_cast<Word*>(lookahead);
+    std::string iterName = w ? w->lexeme() : "";
     match(ID);
     match(DE);
     expr();
     match(ATE);
     expr();
     match(FACA);
+    sem->enterScope();
     listaComandos();
+    sem->exitScope();
 
     if (lookahead != NULL && lookahead->tag == FIM) {
         match(FIM);
@@ -340,24 +400,37 @@ void Parser::listaComandos() {
     }
 }
 
-void Parser::listaIDs() {
+void Parser::listaIDs(SemanticAnalyzer::TypeCode declaredType) {
+    if (lookahead == NULL) error("Lista de IDs");
+
+    if (lookahead->tag != ID) error("ID");
+    Word* w = dynamic_cast<Word*>(lookahead);
+    std::string name = w ? w->lexeme() : "";
     match(ID);
 
+    bool isArray = false;
     if (lookahead != NULL && lookahead->tag == '[') {
         match('[');
         match(NUM_INT);
         match(']');
+        isArray = true;
     }
+    sem->declare(name, declaredType, isArray, lexer->getLine(), lexer->getCol());
 
     while (lookahead != NULL && lookahead->tag == ',') {
         match(',');
+        if (lookahead == NULL || lookahead->tag != ID) error("ID");
+        Word* w2 = dynamic_cast<Word*>(lookahead);
+        std::string name2 = w2 ? w2->lexeme() : "";
         match(ID);
-
+        bool isArray2 = false;
         if (lookahead != NULL && lookahead->tag == '[') {
             match('[');
             match(NUM_INT);
             match(']');
+            isArray2 = true;
         }
+        sem->declare(name2, declaredType, isArray2, lexer->getLine(), lexer->getCol());
     }
 }
 
@@ -370,9 +443,10 @@ void Parser::declaracao() {
         error("Tipo (inteiro, real, caractere, ou logico)");
     }
 
+    int declaredTag = lookahead->tag;
     match(lookahead->tag);
     match(':');
-    listaIDs();
+    listaIDs(sem->tokenTagToType(declaredTag));
     match(';');
 }
 

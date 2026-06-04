@@ -11,8 +11,8 @@ BUILD_DIR = build
 BIN_DIR = .
 
 # Arquivos fonte
-SOURCES = $(SRC_DIR)/main.cpp $(SRC_DIR)/lexer.cpp $(SRC_DIR)/parser.cpp
-OBJECTS = $(BUILD_DIR)/main.o $(BUILD_DIR)/lexer.o $(BUILD_DIR)/parser.o
+SOURCES = $(SRC_DIR)/main.cpp $(SRC_DIR)/lexer.cpp $(SRC_DIR)/parser.cpp $(SRC_DIR)/semantic.cpp
+OBJECTS = $(BUILD_DIR)/main.o $(BUILD_DIR)/lexer.o $(BUILD_DIR)/parser.o $(BUILD_DIR)/semantic.o
 EXECUTABLE = $(BIN_DIR)/compilador
 
 # Alvo padrão
