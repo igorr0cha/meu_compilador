@@ -1,44 +1,9 @@
 algoritmo "Teste Dificil"
-
-inteiro: i, j, limite, vetor[10];
-real: valor, total, media;
-caractere: nome, texto;
-logico: ligado, teste;
-
 inicio
-i <- 0;
-j <- 1;
-limite <- 10;
-valor <- 15.50;
-total <- 0.75;
-media <- 0.0;
-nome <- "ALUNO";
-texto <- "Analise lexica em Portugol";
-ligado <- 1;
-teste <- 0;
-
-para i de 1 ate 10 faca
-    vetor[i] <- i * 2;
-
-se valor < total entao
-    escreva("valor menor que total");
-senao
-    escreva("valor maior ou igual a total");
-
-se valor <= 15.50 entao
-    escreva("valor dentro do limite");
-
-se valor <> total entao
-    escreva("valores diferentes");
-
-enquanto j < limite faca
-    j <- j + 1;
-
-escreva("Resultado: ", nome, texto, media);
-leia(i);
-
-total <- total + valor / 2 - 1 * 3 % 2;
-
-@erro
-
+para i de 1 10 faca
+    escreva(i)
+fim
+enquanto x > 0
+    x <- 1;
+fim
 fim

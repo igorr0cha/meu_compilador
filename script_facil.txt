@@ -1,0 +1,6 @@
+algoritmo "Teste Facil"
+inicio
+x <- 10
+escreva("Oi");
+fim
+
