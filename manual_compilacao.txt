@@ -135,4 +135,8 @@ O Codespaces roda uma máquina virtual grátis diretamente na nuvem.
 
 
 
-g++ -std=c++11 -Wall -Wextra -O2 -I. src/main.cpp src/lexer.cpp src/parser.cpp -o compilador
+g++ -std=c++11 -Wall -Wextra -O2 -I. src/main.cpp 
+
+g++ -std=c++11 -Wall -Wextra -O2 -I. src/main.cpp src/lexer.cpp src/parser.cpp src/semantic.cpp -o compilador
+
+src/lexer.cpp src/parser.cpp -o compilador

@@ -20,6 +20,8 @@ public:
     struct Symbol {
         std::string name;
         TypeCode type;
+        std::string category;
+        int scope;
         bool isArray;
         int line;
         int col;
@@ -28,6 +30,7 @@ public:
 private:
     std::vector<std::unordered_map<std::string, Symbol>> scopes;
     Lexer* lexer;
+    int currentScopeDepth;
 
 public:
     explicit SemanticAnalyzer(Lexer* l);

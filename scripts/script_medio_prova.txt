@@ -1,6 +1,9 @@
 algoritmo "Teste Medio"
+inteiro:x;
 inicio
+x <-1;
 se x > 10
+entao
     escreva("Maior");
 senao
     leia("x");

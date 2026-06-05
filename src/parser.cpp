@@ -227,6 +227,15 @@ void Parser::condicao() {
     if (left == SemanticAnalyzer::TYPE_ERROR || right == SemanticAnalyzer::TYPE_ERROR) {
         sem->error("Operacao relacional com tipos invalidos");
     }
+    
+    // Comparações válidas: entre tipos compatíveis
+    bool compatible = (left == right);
+    if (left == SemanticAnalyzer::TYPE_INT && right == SemanticAnalyzer::TYPE_REAL) compatible = true;
+    if (left == SemanticAnalyzer::TYPE_REAL && right == SemanticAnalyzer::TYPE_INT) compatible = true;
+    
+    if (!compatible) {
+        sem->error("Incompatibilidade de tipos na condicao");
+    }
 }
 
 void Parser::argumento() {
@@ -299,6 +308,13 @@ void Parser::leitura() {
     SemanticAnalyzer::Symbol* s = sem->lookup(name);
     if (!s) sem->error("Identificador nao declarado: " + name);
 
+    if (isArrayAccess && !s->isArray) {
+        sem->error("Variavel '" + name + "' nao e um array");
+    }
+    if (!isArrayAccess && s->isArray) {
+        sem->error("Variavel '" + name + "' e um array; indice esperado");
+    }
+
     match(')');
     match(';');
 }
@@ -345,10 +361,24 @@ void Parser::comandoPara() {
     Word* w = dynamic_cast<Word*>(lookahead);
     std::string iterName = w ? w->lexeme() : "";
     match(ID);
+    
+    SemanticAnalyzer::Symbol* iterSym = sem->lookup(iterName);
+    if (!iterSym) {
+        sem->error("Identificador nao declarado: " + iterName);
+    }
+    
     match(DE);
-    expr();
+    int startType = expr();
     match(ATE);
-    expr();
+    int endType = expr();
+    
+    bool startCompatible = (startType == iterSym->type) || (iterSym->type == SemanticAnalyzer::TYPE_REAL && startType == SemanticAnalyzer::TYPE_INT);
+    bool endCompatible = (endType == iterSym->type) || (iterSym->type == SemanticAnalyzer::TYPE_REAL && endType == SemanticAnalyzer::TYPE_INT);
+    
+    if (!startCompatible || !endCompatible) {
+        sem->error("Limites do comando 'para' incompativeis com a variavel de controle");
+    }
+    
     match(FACA);
     sem->enterScope();
     listaComandos();

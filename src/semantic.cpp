@@ -4,16 +4,20 @@
 
 using namespace std;
 
-SemanticAnalyzer::SemanticAnalyzer(Lexer* l) : lexer(l) {
+SemanticAnalyzer::SemanticAnalyzer(Lexer* l) : lexer(l), currentScopeDepth(0) {
     enterScope();
 }
 
 void SemanticAnalyzer::enterScope() {
     scopes.emplace_back();
+    currentScopeDepth++;
 }
 
 void SemanticAnalyzer::exitScope() {
-    if (!scopes.empty()) scopes.pop_back();
+    if (!scopes.empty()) {
+        scopes.pop_back();
+        currentScopeDepth--;
+    }
 }
 
 void SemanticAnalyzer::declare(const std::string& name, TypeCode type, bool isArray, int line, int col) {
@@ -26,6 +30,8 @@ void SemanticAnalyzer::declare(const std::string& name, TypeCode type, bool isAr
     }
 
     Symbol s; s.name = name; s.type = type; s.isArray = isArray; s.line = line; s.col = col;
+    s.category = isArray ? "Array" : "Variavel";
+    s.scope = currentScopeDepth;
     current[name] = s;
 }
 

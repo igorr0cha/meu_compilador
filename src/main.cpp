@@ -9,7 +9,8 @@ int main(int argc, char* argv[]) {
     string filename;
     
     cout << "============================================\n";
-    cout << "   Compilador Portugol - Analisador Sintatico\n";
+    cout << "   Compilador Portugol - Analise do Compilador\n";
+    cout << "   (Analisador Lexico, Sintatico e Semantico)\n";
     cout << "============================================\n\n";
     
     // Obtém o nome do arquivo
@@ -23,7 +24,7 @@ int main(int argc, char* argv[]) {
         cin >> filename;
     }
     
-    cout << "Iniciando analise...\n";
+    cout << "Iniciando analise do compilador (lexico, sintatico e semantico)...\n";
     cout << "-------------------------------------------\n\n";
     
     try {
@@ -37,7 +38,7 @@ int main(int argc, char* argv[]) {
         // Sucesso
         cout << "\n===========================================\n";
         cout << "SUCESSO!\n";
-        cout << "O programa esta sintaticamente valido.\n";
+        cout << "O programa esta sintaticamente e semanticamente valido.\n";
         cout << "===========================================\n";
         
         // Exibe tabela de simbolos
